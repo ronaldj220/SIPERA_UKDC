@@ -28,7 +28,7 @@
 
         <li class="nav-item">
             <a class="nav-link"
-                href="https://drive.google.com/file/d/1SILxuN_kx-fbvTGYt3GvWONTH-EP2Fef/view?usp=sharing">
+                href="{{ env('GOOGLE_DRIVE_USER_GUIDE') }}">
                 <i class="mdi mdi-account-question menu-icon"></i>
                 <span class="menu-title"><i>User Guide</i></span>
             </a>

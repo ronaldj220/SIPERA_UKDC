@@ -21,28 +21,55 @@
                                             <form action="{{ route('admin.profile.update_profile', Auth::user()->id) }}"
                                                 method="post" id="myForm">
                                                 @csrf
+                                                <div class="form-floating mt-2">
+                                                  <select class="form-select @error('agama') is-invalid @enderror" id="floatingSelect" aria-label="Floating label select example" name="agama">
+                                                    <option value=""> --- Pilih --- </option>
+                                                        @foreach ($agama as $item)
+                                                            <option value="{{ $item->id }}" {{ (old('agama', Auth::user()->id_agama) == $item->id) ? 'selected' : '' }}>
+                                                                {{ $item->agama }}</option>
+                                                        @endforeach
+                                                  </select>
+                                                  <label for="floatingSelect">Agama</label>
+                                                </div>
+                                                @error('agama')
+                                                    <p style="color: red;">* {{ $message }}</p>
+                                                @enderror
+                                                <br>
                                                 <div class="form-floating">
                                                     <input type="text"
                                                         class="form-control @error('nama') is-invalid @enderror"
                                                         id="floatingInput" placeholder="Masukkan Nama Admin"
-                                                        name="nama" value="{{ old('nama') }}">
+                                                        name="nama" value="{{ old('nama', Auth::user()->nama) }}">
                                                     <label for="floatingInput">Nama</label>
                                                 </div>
                                                 @error('nama')
                                                     <p style="color: red;">{{ $message }}</p>
                                                 @enderror
+                                                <br>
                                                 <div class="form-floating">
                                                     <input type="text"
                                                         class="form-control @error('NIP') is-invalid @enderror"
-                                                        id="floatingPassword" placeholder="Masukkan NIP" name="NIP">
+                                                        id="floatingPassword" placeholder="Masukkan NIP" name="NIP" value="{{ old('NIP', Auth::user()->NIP) }}">
                                                     <label for="floatingPassword">NIP</label>
                                                 </div>
                                                 @error('NIP')
                                                     <p style="color: red;">{{ $message }}</p>
                                                 @enderror
+                                                <!--Email-->
+                                                <br>
+                                                <div class="form-floating">
+                                                    <input type="email"
+                                                        class="form-control @error('email') is-invalid @enderror"
+                                                        id="floatingPassword" placeholder="Masukkan NIP" name="email" value="{{ old('email', Auth::user()->email) }}">
+                                                    <label for="floatingPassword">Email</label>
+                                                </div>
+                                                @error('email')
+                                                    <p style="color: red;">{{ $message }}</p>
+                                                @enderror
+                                                
                                                 <div class="d-flex justify-content-center" style="margin-top: 20px;">
                                                     <button class="btn btn-rounded btn-primary" id="submitBtn"
-                                                        type="button">Submit</button>
+                                                        type="button">Update Profile</button>
                                                 </div>
                                             </form>
                                         </div>

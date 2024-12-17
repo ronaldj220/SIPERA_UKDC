@@ -39,10 +39,9 @@
                 <form class="login100-form validate-form" method="POST" action="{{ route('aksi_sign_up') }}">
                     @csrf
                     <span class="login100-form-title" style="margin-bottom: 50px">
-                        <img src="https://ukdc.ac.id/wp-content/uploads/2022/08/logo-font-bg-polos.png" alt=""
-                            width="250">
-                        <p style="text-transform: uppercase; margin-top: 20px; font-weight: bold; font-size: 17px">
+                        <p style="text-transform: uppercase; font-weight: bold; font-size: 17px">
                             Sistem Informasi Perekrutan Pegawai <br></p>
+                        <p style="font-size: 14px; margin-top: 10px;">Silakan registrasi untuk melanjutkan atau kembali ke <a href="{{ route('home') }}">Beranda</a></p>
                     </span>
 
                     <div class="wrap-input100 validate-input m-b-23" data-validate = "Email is required">
@@ -53,8 +52,8 @@
 
                     <div class="wrap-input100 validate-input" data-validate = "Name is required"
                         style="margin-top: 20px;">
-                        <span class="label-input100">Nama</span>
-                        <input class="input100" type="text" name="nama" placeholder="Type your name">
+                        <span class="label-input100">Nama Lengkap</span>
+                        <input class="input100" type="text" name="nama" placeholder="Type your full name">
                         <span class="focus-input100" data-symbol="&#xf206;"></span>
                     </div>
 
@@ -72,6 +71,7 @@
                             placeholder="Type your confirm password">
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
+                   
                     <div style="margin-top: 20px;">
                         <label for="">Jenis Kelamin</label> <br>
                         <div class="form-check form-check-inline" style="margin-left: 20px;">
@@ -94,7 +94,7 @@
                     </div>
                     <div class="flex-col-c p-t-20">
                         <span class="txt1 p-b-20">
-                            Or
+                            Sudah punya akun?
                         </span>
 
                         <a href="{{ route('login') }}" class="txt2">

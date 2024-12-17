@@ -24,7 +24,7 @@
                                                     <input type="password"
                                                         class="form-control @error('new_password') is-invalid @enderror"
                                                         id="floatingInput" placeholder="Masukkan Departemen"
-                                                        name="new_password" value="{{ old('departemen') }}">
+                                                        name="new_password" value="{{ old('new_password') }}">
                                                     <label for="floatingInput">New Password</label>
                                                 </div>
                                                 @error('new_password')

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('no_doku_rektor')->nullable();
             $table->unsignedBigInteger('id_rekrutmen')->unique();
             $table->foreign('id_rekrutmen')->references('id')->on('recruitmen');
-            $table->string('tempat_pengajuan')->nullable();
+            $table->unsignedBigInteger('id_lokasi_psikotes')->unique()->after('id_rekrutmen');
+            $table->foreign('id_lokasi_psikotes')->references('id')->on('lokasi_psikotes');
             $table->date('tgl_pengajuan')->nullable();
             $table->date('tgl_hadir')->nullable();
             $table->time('jam_hadir')->nullable();

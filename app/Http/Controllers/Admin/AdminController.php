@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role_Has_User;
 use App\Models\User;
+use App\Models\Admin\Agama;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,9 +39,11 @@ class AdminController extends Controller
             ->where('role_has_users.fk_role', 1)
             ->select('users.*', 'role.role as role_name')
             ->first();
+        $agama = Agama::all();
         return view('halaman_admin.admin.add_admin', [
             'title' => $title,
-            'admin' => $admin
+            'admin' => $admin,
+            'agama' => $agama
         ]);
     }
     public function save_admin(Request $request)
@@ -59,7 +62,14 @@ class AdminController extends Controller
                 'nama' => $request->input('nama'),
                 'password' => Hash::make($request->input('password')),
                 'gender' => $request->input('gender'),
-                'is_active' => 0
+                'is_active' => 0,
+                'tempat_lahir' => NULL,
+                'tgl_lahir' => NULL,
+                'pendidikan' => NULL,
+                'alamat' => NULL,
+                'phone_number' => NULL,
+                'jurusan' => NULL,
+                'id_agama' => NULL
             ];
             $admin = User::create($data);
             Role_Has_User::create([

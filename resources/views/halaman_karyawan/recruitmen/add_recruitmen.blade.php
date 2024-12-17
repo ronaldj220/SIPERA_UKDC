@@ -30,6 +30,15 @@
                                                         value="{{ $no_doku }}" name="no_doku">
                                                 </div>
                                                 <div class="form-group">
+                                                    <label for="lowongan_id">Pilih Lowongan</label>
+                                                    <select name="lowongan_id" id="lowongan_id" class="form-control" required>
+                                                        <option value="">-- Pilih Lowongan --</option>
+                                                        @foreach ($lowongan as $item)
+                                                            <option value="{{ $item->id }}">{{ $item->name_lowongan }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
                                                     <label for="exampleInputPassword1">Tanggal Pengajuan</label>
                                                     <input type="text" class="form-control"
                                                         id="exampleInputPassword1" value="{{ date('d/m/Y') }}" readonly
@@ -67,14 +76,10 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="exampleFormControlSelect1">Jabatan</label>
-                                                    <select name="nama_lamaran" id="" class="form-control">
-                                                        <option value=""> --- Pilih --- </option>
-                                                        <option value="Karyawan"> Karyawan </option>
-                                                        <option value="Dosen"> Dosen </option>
-                                                    </select>
-                                                </div>
+                                                @error('nama_departemen')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
                                                 <div class="form-group" hidden>
                                                     <label for="exampleInputPassword1">PiC</label>
                                                     <input type="text" class="form-control" readonly name="pic"
@@ -90,6 +95,45 @@
                                                     <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
                                                             &nbsp;{{ $message }}</span></div>
                                                 @enderror
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlFile1">Upload Transkrip Nilai dan Ijazah</label> <br>
+                                                    <input type="file"
+                                                        class="form-control-file @error('transkrip') is-invalid @enderror"
+                                                        id="exampleFormControlFile1" name="transkrip" accept=".pdf">
+                                                </div>
+                                                @error('transkrip')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
+                                                <div class="form-group">
+    <label for="kenalan_rekrutmen">Dari mana Anda mengenal lowongan ini?</label><br>
+    <div>
+        <input type="radio" id="teman" name="kenalan_rekrutmen" value="teman">
+        <label for="teman">Teman</label>
+    </div>
+    <div>
+        <input type="radio" id="keluarga" name="kenalan_rekrutmen" value="keluarga">
+        <label for="keluarga">Keluarga</label>
+    </div>
+    <div>
+        <input type="radio" id="media_sosial" name="kenalan_rekrutmen" value="media_sosial">
+        <label for="media_sosial">Media Sosial</label>
+    </div>
+    <div>
+        <input type="radio" id="job_fair" name="kenalan_rekrutmen" value="job_fair">
+        <label for="job_fair">Job Fair</label>
+    </div>
+    <div>
+        <input type="radio" id="website_perusahaan" name="kenalan_rekrutmen" value="website_perusahaan">
+        <label for="website_perusahaan">Website Perusahaan</label>
+    </div>
+    <div>
+        <input type="radio" id="lainnya" name="kenalan_rekrutmen" value="lainnya">
+        <label for="lainnya">Lainnya:</label>
+        <input type="text" name="kenalan_rekrutmen_lainnya" placeholder="Sebutkan">
+    </div>
+</div>
+
                                                 <div class="d-flex justify-content-center" style="margin-top: 20px;">
                                                     <button class="btn btn-rounded btn-primary" id="submitBtn"
                                                         type="button">Ajukan Lamaran</button>

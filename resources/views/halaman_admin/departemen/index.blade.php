@@ -1,4 +1,6 @@
 @include('layouts.halaman_admin.header')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 
 <body class="with-welcome-text">
     <div class="container-scroller">
@@ -17,23 +19,22 @@
                                             <p class="card-description text-center">
                                                 Digunakan pada saat proses rekrutmen
                                             </p>
-                                            <a href="{{ route('admin.departemen.add_departemen') }}"
+                                            <div class='d-flex justify-content-between'>
+                                                <a href="{{ route('admin.departemen.add_departemen') }}"
                                                 class="btn btn-rounded btn-primary"><span
                                                     class="mdi mdi-eye-plus"></span> Tambah Departemen</a>
+                                            <div class="d-flex">
+                                                    <input type='search' class="form-control" placeholder="Search Departemen Here" name='q' id='search' />
+                                                </div>
+
+                                            </div>
+
                                             <div class="table-responsive">
-                                                <table class="table table-hover">
+                                                <table class="table table-hover" id="search-results">
                                                     <thead class="text-center">
                                                         <tr>
                                                             <th>No.</th>
-                                                            <th>Departemen</th>
-                                                            @if ($departemen && count($departemen) > 0)
-                                                                @php
-                                                                    $item = $departemen[0];
-                                                                @endphp
-                                                                @if ($item->PIC)
-                                                                    <th>PiC</th>
-                                                                @endif
-                                                            @endif
+                                                            <th>@sortablelink('departemen', 'Departemen')</th>
                                                             <th>Aksi</th>
                                                         </tr>
                                                     </thead>
@@ -43,22 +44,39 @@
                                                             <tr>
                                                                 <td>{{ $no++ . '.' }}</td>
                                                                 <td> {{ $item->departemen }} </td>
-                                                                @if ($item->PIC)
-                                                                    <td> {{ $item->PIC }} </td>
-                                                                @endif
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        <a id="hapusBtn"
-                                                                            class="btn btn-rounded btn-outline-warning"
-                                                                            data-id="{{ $item->id }}"><span
-                                                                                class="mdi mdi-delete-circle"></span>&nbsp;
-                                                                            Hapus</a>
+                                                                            <a href="{{ route('admin.departemen.edit_departemen', $item->id) }}" class="btn btn-info">
+                                                        <span>Edit</span>
+        									        </a>
+                                                                            <button class="btn btn-danger btn-rounded delete-btn" data-id="{{ $item->id }}">
+            <span>Delete</span>
+        </button>
+        </div>
                                                                     </div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
                                                 </table>
+                                                @if($departemen->count() > 0)
+                                                    <div class="row">
+                                                        <div class="col-lg-12 d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                Showing {{ $departemen->firstItem() }} to {{ $departemen->lastItem() }} of {{ $departemen->total() }} entries
+                                                            </div>
+                                                            <div>
+                                                                {!! $departemen->appends(Request::except('page'))->render() !!}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="row">
+                                                        <div class="col-lg-12 text-center">
+                                                            <p>No entries found.</p>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -78,25 +96,96 @@
 
     @include('layouts.halaman_admin.script')
     <script>
-        document.getElementById('hapusBtn').addEventListener('click', function(event) {
-            var dataId = this.getAttribute('data-id');
-            // console.log(dataId);
-            event
-        .preventDefault(); // Mencegah aksi default tombol (misalnya, pengiriman formulir atau navigasi link)
-
-            Swal.fire({
-                title: 'Yakin akan menghapus data?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'departemen/hapus_departemen/' + dataId +
-                    ''; // Arahkan ke halaman hapus_data jika disetujui
+        $(document).ready(function() {
+        $('#search').on('keyup', function() {
+            let query = $(this).val();
+            $.ajax({
+                url: "{{ route('admin.departemen.search') }}", // Use the search route
+                type: "GET",
+                data: {
+                    q: query // Pass the query as 'q' parameter
+                },
+                success: function(data) {
+                    // Clear existing results
+                    $('#search-results tbody').empty();
+                    
+                    console.log(data);
+                    
+                    // Append new results
+                    if (data.data.length > 0) {
+                        data.data.forEach(function(item, index) {
+                            $('#search-results tbody').append(`
+                                <tr>
+                                    <td>${data.from + index}</td>
+                                    <td>${item.departemen}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{ url('admin/lowongan/edit') }}/${item.id}" class="btn btn-info">
+                                                <span>Edit</span>
+                                            </a>
+                                            &nbsp;
+                                            <button class="btn btn-danger btn-rounded delete-btn" data-id="${item.id}">
+            <span>Delete</span>
+        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+    
+                        // Update pagination info
+                        $('.pagination-info').html(`
+                            Showing ${data.from} to ${data.to} of ${data.total} entries
+                        `);
+                    } else {
+                        $('#search-results tbody').append('<tr><td colspan="6" class="text-center">No entries found.</td></tr>');
+                    }
                 }
             });
+        });
+    });
+    
+    $(document).on('click', '.delete-btn', function() {
+            let lowonganId = $(this).data('id'); // Ambil ID lowongan
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data ini akan dihapus secara permanen!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/admin/departemen/deleteDepartemen/${lowonganId}`, // URL endpoint
+                        type: "POST",
+                        data: {
+                            _method: 'DELETE', // Laravel memerlukan _method untuk metode DELETE
+                            _token: "{{ csrf_token() }}" // Token CSRF untuk otentikasi
+                        },
+                        success: function(response) {
+                            Swal.fire("Berhasil!", response.message, "success").then(() => {
+                                window.location.reload(); // Reload halaman untuk memperbarui data
+                            });
+                        },
+                        error: function(xhr) {
+                            // Tangani kesalahan
+                            Swal.fire(
+                                "Gagal!",
+                                xhr.responseJSON?.message || "Terjadi kesalahan saat menghapus data.",
+                                "error"
+                            );
+                        }
+                    });
+                }
+            });
+        });
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
     </script>
 </body>

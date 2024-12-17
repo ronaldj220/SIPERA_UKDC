@@ -12,8 +12,9 @@
         <p style="text-align: justify; margin-top: 20px; font-size: 16px;">
             Hai, {{ $namaPelamar }} <br><br>
             @if ($statusPelamar == 'approved')
-                <p>Selamat! Anda telah diterima sebagai .</p> <br>
-                <a href="{{ route('karyawan.beranda') }}" style="color: #3490dc;">Lihat Informasi Lebih Lanjut</a><br>
+                <p>Selamat! Anda telah diterima sebagai {{ $unitKerja }}.</p> <br>
+                <a href="{{ route('karyawan.beranda') }}" style="color: #3490dc;">Lihat Informasi Lebih Lanjut</a>
+                <br>
             @elseif ($statusPelamar == 'rejected')
                 <p>Maaf, hasil tes Anda ditolak. Kami menyarankan Anda untuk mempersiapkan diri lebih baik untuk peluang
                     lainnya.</p> <br>
@@ -30,8 +31,8 @@
 
         <p style='font-size : 12px;
 					font-family : sans-serif;
-					text-align : center;'> &copy; SILAMAR (Sistem
-            Informasi Pelamar)
+					text-align : center;'> &copy; SIPERA (Sistem
+            Informasi Perekrutan Pegawai)
             {{ date('Y') }}
         </p>
     </div>

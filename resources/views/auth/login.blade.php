@@ -39,10 +39,10 @@
                 <form class="login100-form validate-form" method="POST" action="{{ route('aksilogin') }}">
                     @csrf
                     <span class="login100-form-title" style="margin-bottom: 50px">
-                        <img src="https://ukdc.ac.id/wp-content/uploads/2022/08/logo-font-bg-polos.png" alt=""
-                            width="250">
-                        <p style="text-transform: uppercase; margin-top: 20px; font-weight: bold; font-size: 17px">
+                        <p style="text-transform: uppercase; font-weight: bold; font-size: 17px">
                             Sistem Informasi Perekrutan Pegawai</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Silakan login untuk melanjutkan atau kembali ke <a href="{{ route('home') }}">Beranda</a></p>
+
                     </span>
 
                     <div class="wrap-input100 validate-input m-b-23" data-validate = "Email is required">
@@ -57,21 +57,6 @@
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
 
-                    <div style="margin-bottom: 5px; margin-top: 20px; margin-left: 100px;">
-                        <span class="label-input100">
-                            <input class="form-check-input" type="checkbox" id="remember" name="remember"
-                                style="margin-left: -100px">
-                            <label class="form-check-label" for="gridCheck" style="margin-left: -100px">
-                                Keep Me Logged In
-                            </label>
-                        </span>
-                        <div class="text-right" style="margin-top: -25px">
-                            <a href="#">
-                                Forgot password?
-                            </a>
-                        </div>
-                    </div>
-
                     <div class="container-login100-form-btn" style="margin-top: 20px">
                         <div class="wrap-login100-form-btn">
                             <div class="login100-form-bgbtn"></div>
@@ -82,10 +67,16 @@
                     </div>
 
                     <div class="flex-col-c p-t-20">
-                        <a href="{{ route('sign_up') }}" class="txt2">
-                            Sign Up
-                        </a>
-                    </div>
+                        <a href="{{ route('forgot-password') }}" style="color:blue"> Forgot password? </a>
+        <hr>
+    <span class="txt1 p-b-20">
+        Belum punya akun?
+    </span>
+    <a href="{{ route('sign_up') }}" class="txt2">
+        Daftar sekarang
+    </a>
+</div>
+
                 </form>
             </div>
         </div>

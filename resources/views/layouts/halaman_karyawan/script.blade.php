@@ -16,6 +16,14 @@
 <script src="{{ asset('template') }}/js/jquery.cookie.js" type="text/javascript"></script>
 <script src="{{ asset('template') }}/js/dashboard.js"></script>
 <!-- <script src="../../js/Chart.roundedBarCharts.js"></script> -->
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <!-- End custom js for this page-->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>

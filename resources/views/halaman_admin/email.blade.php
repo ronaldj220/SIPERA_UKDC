@@ -44,8 +44,7 @@
 
         <p style='font-size : 12px;
 					font-family : sans-serif;
-					text-align : center;'> &copy; SILAMAR (Sistem
-            Informasi Pelamar)
+					text-align : center;'> &copy; Sistem Informasi Perekrutan Pegawai
             {{ date('Y') }}
         </p>
     </div>

@@ -16,10 +16,14 @@
             </a>
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
-                    <a class="nav-link" href="{{ route('admin.departemen') }}">Departemen</a>
-                    <a class="nav-link" href="{{ route('admin.role') }}">Role</a>
-                    <a class="nav-link" href="{{ route('admin.admin') }}">Admin</a>
-                    <a class="nav-link" href="{{ route('admin.pelamar') }}">Pelamar</a>
+                    <a class="nav-link" href="{{ route('admin.admin') }}">Daftar Admin</a>
+                    <a class="nav-link" href="{{ route('admin.departemen') }}">Daftar Departemen</a>
+                    <a class="nav-link" href="{{route('admin.lowongan')}}">Daftar Lowongan</a>
+                    <a class="nav-link" href="{{ route('admin.lokasi_psikotes') }}">Lokasi Psikotes</a>
+                    <a class="nav-link" href="{{ route('admin.lokasiWawancara') }}">Lokasi Wawancara</a>
+                    <a class="nav-link" href="{{ route('admin.statusPegawai') }}">Status Pegawai</a>
+                    <a class="nav-link" href="{{ route('admin.unitKerja') }}">Unit Kerja</a>
+                    <a class="nav-link" href="{{ route('admin.pos_lamaran') }}">Posisi Lamaran</a>
                 </ul>
             </div>
         </li>

@@ -43,6 +43,23 @@
     <!-- container-scroller -->
 
     @include('layouts.halaman_admin.script')
+    
+    <!-- SweetAlert for Notifications -->
+    @if($notifications->count() > 0)
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var notificationText = "{{ $notifications->first()->data['message'] }}";
+                Swal.fire({
+                    title: 'Pemberitahuan',
+                    text: notificationText,
+                    icon: 'info',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        </script>
+    @endif
 </body>
 @include('sweetalert::alert')
 

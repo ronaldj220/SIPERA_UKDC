@@ -1,5 +1,6 @@
 @php
     date_default_timezone_set('Asia/Jakarta');
+
 @endphp
 @include('layouts.halaman_admin.header')
 
@@ -16,10 +17,20 @@
                                 <div class="col-lg-8 grid-margin stretch-card">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h4 class="card-title text-center">Edit Recruitmen</h4>
+                                            <h4 class="text-center">Ajukan Surat Pemanggilan Tes dan Wawancara</h4>
                                             <p class="card-description text-center">
                                                 Digunakan pada saat pemanggilan tes dan wawancara
                                             </p>
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+
                                             <form
                                                 action="{{ route('admin.recruitmen.update_rekrutmen', $recruitmen->id) }}"
                                                 method="post" id="myForm">
@@ -27,24 +38,51 @@
                                                 <div class="form-floating mb-3">
                                                     <input type="date" class="form-control" id="floatingInput"
                                                         placeholder="Masukkan Departemen" name="tgl_hadir"
-                                                        value="{{ old('tgl_hadir') }}">
+                                                        value="{{ old('tgl_hadir',  $recruitmen->tgl_hadir) }}">
                                                     <label for="floatingInput">Tanggal Hadir</label>
                                                 </div>
+                                                @error('tgl_hadir')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
+                                                <div class="form-group mt-3">
+                                                    <label for="exampleFormControlSelect1">Lokasi Wawancara</label>
+                                                    <select name="lokasi_wawancara" id="lokasi_wawancara" class="form-control">
+                                                        <option value=""> --- Pilih --- </option>
+                                                        @foreach ($lokasiWawancara as $item)
+                                                            <option value="{{ $item->id }}" {{ old('lokasi_wawancara', $recruitmen->id_lokasi_wawancara) == $item->id ? 'selected' : '' }}>{{ $item->lokasi }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('lokasi_wawancara')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
                                                 <div class="row" id="detail">
                                                     <div class="form-group col-md-3">
                                                         <label for="inputEmail4">Jam Hadir</label>
-                                                        <input type="time" class="form-control" id="inputEmail4"
-                                                            name="jam_hadir[]">
+                                                        <input type="time" class="form-control @error('jam_hadir.*') is-invalid @enderror" id="inputEmail4" name="jam_hadir[]">
+                                                        @error('jam_hadir.*')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="form-group col-md-3">
                                                         <label for="inputEmail4">Jam Selesai</label>
-                                                        <input type="time" class="form-control" id="inputEmail4"
+                                                        <input type="time" class="form-control @error('jam_selesai.*') is-invalid @enderror" id="inputEmail4"
                                                             name="jam_selesai[]">
+                                                            @error('jam_selesai.*')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
                                                     </div>
                                                     <div class="form-group col-md-3">
-                                                        <label for="inputEmail4">Kegiatan</label>
-                                                        <input type="text" class="form-control" id="inputEmail4"
-                                                            placeholder="Email" name="kegiatan[]">
+                                                        <div class="form-floating mb-3">
+  <input type="text" class="form-control @error('kegiatan.*') is-invalid @enderror" id="floatingInput" placeholder="name@example.com" name='kegiatan[]'>
+  <label for="floatingInput">Kegiatan</label>
+</div>
+@error('kegiatan.*')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
                                                     </div>
                                                     <div class="form-group col-md-3">
 
@@ -55,7 +93,7 @@
                                                 </div>
                                                 <div class="d-flex justify-content-center" style="margin-top: 20px;">
                                                     <button class="btn btn-rounded btn-primary" id="submitBtn"
-                                                        type="button">Simpan Jadwal</button>
+                                                        type="button">Simpan</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -110,9 +148,10 @@
                                                         <input type="time" class="form-control" id="inputEmail4" name="jam_selesai[]">
                                                     </div>
                                                     <div class="form-group col-md-3">
-                                                        <label for="inputEmail4">Kegiatan</label>
-                                                        <input type="text" class="form-control" id="inputEmail4"
-                                                            placeholder="Email" name="kegiatan[]">
+                                                                                                                <div class="form-floating mb-3">
+  <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name='kegiatan[]'>
+  <label for="floatingInput">Kegiatan</label>
+</div>
                                                     </div>
                                                     <div class="form-group col-md-3">
                                                         <button name="delete${no}" id="delete${no}" class="btn btn-danger btn-sm" type="button" onclick="deleteRow(this);" style="margin-bottom: -50px;">Hapus</button>
@@ -134,5 +173,6 @@
         }
     </script>
 </body>
+@include('sweetalert::alert')
 
 </html>

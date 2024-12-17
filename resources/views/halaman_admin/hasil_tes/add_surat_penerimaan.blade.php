@@ -40,31 +40,22 @@
                                                     <select name="pemohon" id="" class="form-control">
                                                         <option value=""> --- Pilih --- </option>
                                                         @foreach ($pemohon as $item)
-                                                            <option value="{{ $item->pemohon }}">{{ $item->pemohon }}
+                                                            <option value="{{ $item->user->id }}">{{ $item->user->nama }}
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Tempat Lahir</label>
-                                                            <input type="text" class="form-control"
-                                                                placeholder="Tempat Lahir" name="tempat_lahir">
-                                                        </div>
-                                                        <div class="col">
-                                                            <label for="">Tanggal Lahir</label>
-                                                            <input type="date" class="form-control"
-                                                                placeholder="Last name" name="tgl_lahir">
-                                                        </div>
-                                                    </div>
+                                                    <label for="exampleFormControlSelect1">Posisi Lamaran</label>
+                                                    <select name="id_posisi_lamaran" id="posisi_lamaran" class="form-control">
+                                                        <option value=""> --- Pilih --- </option>
+                                                        @foreach ($posisi_lamaran as $item)
+                                                            <option value="{{ $item->id }}">{{ $item->posisi }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
-                                                <div class="form-floating">
-                                                    <input type="text" class="form-control " id="floatingPassword"
-                                                        placeholder="Masukkan Alamat" name="alamat">
-                                                    <label for="floatingPassword">Alamat</label>
-                                                </div>
-                                                <div class="form-group">
+                                                <div class="form-group" hidden>
                                                     <label for="exampleInputPassword1">Tanggal Kerja
                                                         (SP)</label>
                                                     <input type="date"

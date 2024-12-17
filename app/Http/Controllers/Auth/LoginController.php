@@ -23,13 +23,9 @@ class LoginController extends Controller
                 return redirect()->route('admin.beranda');
             } elseif (Auth::user()->role_has_user[0]->fk_role == 2) {
                 return redirect()->route('karyawan.beranda');
-            } elseif (Auth::user()->role_has_user[0]->fk_role == 3) {
-                return redirect()->route('karyawan.beranda');
-            } elseif (Auth::user()->role_has_user[0]->fk_role == 4) {
-                return redirect()->route('karyawan.beranda');
             }
         } else {
-            return redirect()->route('login');
+            return redirect('/');
         }
     }
     public function index()
@@ -92,7 +88,9 @@ class LoginController extends Controller
     {
         // Validasi input
         $request->validate([
-            'email' => 'unique:users,email'
+            'email' => 'unique:users,email',
+            'password' => 'required|min:4',
+            'confirm_pwd' => 'required|same:password',
         ], [
             'email.unique' => 'Email tidak boleh digunakan kedua kali!'
         ]);
@@ -100,9 +98,10 @@ class LoginController extends Controller
             $data = [
                 'email' => $request->input('email'),
                 'nama' => $request->input('nama'),
-                'password' => Hash::make($request->input('confirm_pwd')),
+                'password' => Hash::make($request->input('password')),
                 'gender' => $request->input('jk'),
-                'is_active' => 0
+                'is_active' => 0,
+                'profil_lengkap' => 0
             ];
             // Buat data role berisi role dari masing-masing
             if ($data['gender'] == 'P') {

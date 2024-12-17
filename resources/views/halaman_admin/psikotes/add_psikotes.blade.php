@@ -30,26 +30,36 @@
                                                         value="{{ $no_doku }}" name="no_doku_psikotes">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="exampleInputEmail1">Nomor Dokumen Rektor</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1"
-                                                        aria-describedby="emailHelp" name="no_doku_rektor">
-                                                </div>
-                                                <div class="form-group">
                                                     <label for="exampleInputPassword1">Tanggal Pengajuan
                                                         Psikotes</label>
                                                     <input type="date" class="form-control"
-                                                        id="exampleInputPassword1" name="tgl_ajukan">
+                                                        id="exampleInputPassword1" name="tgl_ajukan" value="{{ old('tgl_ajukan') }}">
                                                 </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text"
+                                                        class="form-control @error('no_doku_rektor') is-invalid @enderror"
+                                                        id="floatingInput" placeholder="Masukkan Role" name="no_doku_rektor"
+                                                        value="{{ old('no_doku_rektor') }}">
+                                                    <label for="floatingInput">Nomor Dokumen Rektor</label>
+                                                </div>
+                                                @error('no_doku_rektor')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
                                                 <div class="form-group">
                                                     <label for="exampleFormControlSelect1">Pemohon</label>
-                                                    <select name="pemohon" id="" class="form-control">
+                                                    <select name="pemohon" id="pemohon" class="form-control @error('pemohon') is-invalid @enderror">
                                                         <option value=""> --- Pilih --- </option>
                                                         @foreach ($pemohon as $item)
-                                                            <option value="{{ $item->pemohon }}">{{ $item->pemohon }}
+                                                            <option value="{{ $item->user->id }}" @if(old('pemohon') == $item->user->id) selected @endif>{{ $item->user->nama }}
                                                             </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                                @error('pemohon')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
                                                 <div class="form-group">
                                                     <label for="exampleInputPassword1">Tanggal Hadir
                                                         Psikotes</label>
@@ -60,19 +70,32 @@
                                                     <label for="exampleInputPassword1">Jam Hadir
                                                         Psikotes</label>
                                                     <input type="time" class="form-control"
-                                                        id="exampleInputPassword1" name="jam_hadir">
+                                                        id="exampleInputPassword1" name="jam_hadir" value="{{ old('jam_hadir') }}">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="exampleInputPassword1">Lokasi Psikotes</label>
-                                                    <input type="text"
-                                                        class="form-control @error('lokasi_hadir') is-invalid @enderror"
-                                                        name="lokasi_hadir">
+                                                    <label for="exampleFormControlSelect1">Lokasi Psikotes</label>
+                                                    <select name="lokasi_hadir" required>
+    <option value="">Pilih Lokasi Psikotes</option>
+    @foreach ($lokasi_psikotes as $lokasi)
+        <option value="{{ $lokasi->id }}" @if(old('lokasi_hadir') == $lokasi->id) selected @endif>{{ $lokasi->lokasi_psikotes }}</option>
+    @endforeach
+</select>   
                                                 </div>
-                                                @error('lokasi_hadir')
+                                                @error('lokasi_psikotes')
                                                     <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
                                                             &nbsp;{{ $message }}</span></div>
                                                 @enderror
-
+                                        <div class="form-floating mb-3">
+                                                    <input type="text"
+                                                        class="form-control @error('link_psikotes') is-invalid @enderror"
+                                                        id="floatingInput" placeholder="Masukkan Role" name="link_psikotes"
+                                                        value="{{ old('link_psikotes') }}">
+                                                    <label for="floatingInput">Link Psikotes</label>
+                                                </div>
+                                                @error('link_psikotes')
+                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
+                                                            &nbsp;{{ $message }}</span></div>
+                                                @enderror
                                                 <div class="d-flex justify-content-center" style="margin-top: 20px;">
                                                     <button class="btn btn-rounded btn-primary" id="submitBtn"
                                                         type="button">Ajukan Surat Psikotes</button>

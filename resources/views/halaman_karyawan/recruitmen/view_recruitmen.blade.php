@@ -4,50 +4,89 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIPERA (UKDC) ({{ $karyawan->role_name }}) | {{ $title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="shortcut icon" href="https://ukdc.ac.id/wp-content/uploads/2022/07/cropped-logo-kecil-32x32.png" />
+    <title>Sistem Informasi Perekrutan Pegawai ({{ $karyawan->role_name }}) | {{ $title }}</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .table-borderless td {
+            border: none;
+        }
+
+        .table-bordered, .table-bordered th, .table-bordered td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <br><br><br><br><br>
-        <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 11px; margin-left: -5px;">
+
+    <div style="margin-left:3px;">
+        <br><br><br><br><br><br><br><br>
+        <table class="table-borderless" style="width: 100%;">
             <tr>
-                <td>Nomor<br>Hal<br>Lamp.</td>
-                <td>: {{ $recruitmen->no_doku }}<br> : Panggilan Tes dan Wawancara <br> : -
-                </td>
+                <td style="width: 10%">Nomor<br>Hal<br>Lamp.</td>
+                <td>: {{ $recruitmen->no_doku }}<br> : Panggilan Tes dan Wawancara <br> : - </td>
             </tr>
         </table>
-        <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 11px; margin-left: -5px;">
+
+        <table class="table-borderless" style="width: 100%;">
             <tr>
                 <td>Kepada Yth. <br>
-                    Sdr/Sdri {{ $recruitmen->pemohon }} <br> Di tempat,
+                    @if($recruitmen->user->gender == 'P')
+                        Sdr.
+                    @elseif($recruitmen->user->gender == 'W')
+                        Sdri.
+                    @endif
+                    {{ $recruitmen->user->nama }} <br> Di tempat,
                 </td>
+            </tr>
+        </table>
 
+        <table class="table-borderless" style="width: 100%;">
+            <tr>
+                <td>Dengan Hormat,</td>
             </tr>
         </table>
-        <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 11px; margin-left: -5px; margin-top: -10px;">
+
+        <table class="table-borderless" style="width: 100%;">
             <tr>
-                <td>Dengan Hormat,
+                <td>Menanggapi surat lamaran kerja 
+                    @if($recruitmen->user->gender == 'P')
+                        Saudara,
+                    @elseif($recruitmen->user->gender == 'W')
+                        Saudari,
+                    @endif maka dengan ini kami mengharap kedatangan
+                    @if($recruitmen->user->gender == 'P')
+                        Saudara
+                    @elseif($recruitmen->user->gender == 'W')
+                        Saudari
+                    @endif
+                    pada:
                 </td>
             </tr>
         </table>
-        <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 11px; margin-left: -5px; margin-top: -10px;">
-            <tr>
-                <td>Menanggapi surat lamaran kerja Saudara/Saudari, maka dengan ini kami mengharap kedatangan
-                    Saudara/Saudari pada:
-                </td>
-            </tr>
-        </table>
-        <table class="table is-striped table-bordered border-dark table-sm">
-            <thead style="font-family: Arial, Helvetica, sans-serif; font-size: 11px;">
+
+        <!-- Tabel Jadwal -->
+        <table class="table-bordered" style="width: 100%;">
+            <thead>
                 <tr>
                     <th class="text-center">Hari</th>
                     <th class="text-center">Tanggal</th>
@@ -55,55 +94,51 @@
                     <th class="text-center">Keterangan</th>
                 </tr>
             </thead>
-            @foreach ($jamHadirArray as $key => $jamData)
-                <tr style="font-family: Arial, Helvetica, sans-serif; font-size: 11px;">
-                    @if ($key === 0)
-                        <!-- Hanya tampilkan tgl_hadir di baris pertama -->
-                        <td rowspan="{{ count($jamHadirArray) }}" style="vertical-align: middle; width: 5px">
-                            {{ \Carbon\Carbon::parse($recruitmen->tgl_hadir)->locale('id')->translatedFormat('l') }}
-                        </td>
-                    @endif
-                    @if ($key === 0)
-                        <!-- Hanya tampilkan tgl_hadir di baris pertama -->
-                        <td rowspan="{{ count($jamHadirArray) }}" style="vertical-align: middle; width: 10px">
-                            {{ $tgl_hadir }}
-                        </td>
-                    @endif
-                    <td style="width: 50px">
-                        {{ $jamData }} -
-                        {{ $jamSelesaiArray[$key] }}
+            <tbody>
+@if(!empty($jamHadirArray) && count($jamHadirArray) > 0)
+        @foreach($jamHadirArray as $key => $jamHadir)
+            <tr>
+                @if($key === 0)
+                    <td rowspan="{{ count($jamHadirArray) }}">
+                        {{ \Carbon\Carbon::parse($recruitmen->tgl_hadir)->locale('id')->translatedFormat('l') }}
                     </td>
-                    <td style="width: 75%">
-                        {{ $kegiatanArray[$key] }} *
+                    <td rowspan="{{ count($jamHadirArray) }}">
+                        {{ $tgl_hadir }}
                     </td>
-                </tr>
-            @endforeach
-            <tr style="font-family: Arial, Helvetica, sans-serif; font-size: 11px;">
-                <td colspan="{{ count($jamHadirArray) }}">
-                    Tempat: <b>Lantai 7</b> Ruang Biro Administrasi Umum <br><br>
-                    *) <i>Jadwal yang tertera bersifat fleksibel</i>
-                </td>
+                @endif
+                <td>{{ $jamHadir }} - {{ $jamSelesaiArray[$key] }} WIB</td>
+                <td>{{ str_replace('"', '', trim($kegiatanArray[$key], '[]')) }} *</td>
             </tr>
+        @endforeach
+    @endif
+            </tbody>
         </table>
-        <p style="font-family: Arial, Helvetica, sans-serif; font-size: 11px;">
-            Demikian surat panggilan ini kami sampaikan, atas perhatiannya kami ucapkan terima kasih.
-        </p>
-        <div class="col" style="margin-left: 1000px; margin-top: -10px;">
+
+        <!-- Catatan jadwal fleksibel dan tempat -->
+        <div class="table-bordered">
+            <p>Tempat: <b>{{$ruangan}}</b> {{$lokasi}} <br> 
+               *) <i>Jadwal yang tertera bersifat fleksibel</i>
+            </p>
+        </div>
+
+        <!-- Penutup dan tanda tangan -->
+        <p>Demikian surat panggilan ini kami sampaikan, atas perhatiannya kami ucapkan terima kasih.</p>
+
+        <div class="col" style="margin-left: 450px; margin-top: 30px;">
             <div>
                 <table class="table is-striped table-borderless "
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr>
 
                         <td style="width: 50%; ">
-                            <p style="font-family: Arial, Helvetica, sans-serif; font-size: 11px;">
-                                Surabaya,
-                                {{ $tgl_hadir }}</p>
+                            <p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                Surabaya, {{$tgl_pengajuan}}</p>
 
-                            <div style="font-weight: bold; margin-top: -15px;">Homat kami,</div>
-                            <div style="margin-top: 100px"></div>
+                            <div style="font-weight: bold; margin-top: 15px;font-size:12px">Hormat Kami,</div>
+                            <br>                            <br>                            <br>                            <br>                            <br>
 
                             <div
-                                style=" margin-top: -10px; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                style=" margin-top: 10px; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                 <b><u>{{ $admin->nama }}</u></b><br>
                                 <b>NIP. {{ $admin->NIP }}</b>
                             </div>
@@ -113,9 +148,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
-    </script>
+
 </body>
 
 </html>

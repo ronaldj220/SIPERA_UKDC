@@ -5,11 +5,14 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Admin\Role;
+use App\Models\Admin\Agama;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 class User extends Authenticatable
 {
@@ -25,6 +28,14 @@ class User extends Authenticatable
         'email',
         'NIP',
         'gender',
+        'alamat',
+        'tempat_lahir',
+        'tgl_lahir',
+        'id_agama',
+        'phone_number',
+        'universitas',
+        'pendidikan',
+        'jurusan',
         'password',
         'is_active'
     ];
@@ -52,8 +63,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Role_Has_User::class, 'fk_user', 'id');
     }
+    public function agama()
+    {
+        return $this->belongsTo(Agama::class, 'id_agama');
+    }
     public function rekrutmen()
     {
-        return $this->belongsTo(Recruitmen::class, 'id_user');
+        return $this->belongsTo(Recruitmen::class, 'id_users');
+    }
+    
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_has_users', 'fk_user', 'fk_role');
     }
 }

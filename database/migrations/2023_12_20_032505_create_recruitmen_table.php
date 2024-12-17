@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('no_doku')->nullable();
             $table->date('tgl_pengajuan')->nullable();
-            $table->string('pemohon')->nullable();
-            $table->string('email_pemohon')->nullable();
+            $table->unsignedBigInteger('id_users')->unique()->after('tgl_pengajuan');
+            $table->foreign('id_users')->references('id')->on('users');
             $table->string('departemen')->nullable();
             $table->string('PiC')->nullable();
             $table->string('CV')->nullable();
-            $table->string('jabatan_pelamar')->nullable();
+            $table->string('transkrip_nilai')->nullable();
             $table->date('tgl_hadir')->nullable();
             $table->json('jam_hadir')->nullable();
             $table->json('jam_selesai')->nullable();

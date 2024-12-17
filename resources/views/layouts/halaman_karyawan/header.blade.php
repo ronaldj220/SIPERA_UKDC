@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SILAMAR UKDC ({{ $karyawan->role_name }}) | {{ $title }} </title>
+    <title>Sistem Informasi Perekrutan Pegawai UKDC ({{ $karyawan->role_name }}) | {{ $title }} </title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('template') }}/vendors/feather/feather.css">
     <link rel="stylesheet"
@@ -23,4 +23,9 @@
     <link rel="stylesheet" href="{{ asset('template') }}/css/vertical-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="https://ukdc.ac.id/wp-content/uploads/2022/07/cropped-logo-kecil-32x32.png" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+
+
 </head>
