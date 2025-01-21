@@ -29,9 +29,9 @@ class RecruitmenController extends Controller
         $karyawanLogin = Auth::user();
         // Mengambil recruitmen berdasarkan id_user yang login
         $recruitmen = Recruitmen::where('id_users', $karyawanLogin->id)->get();
-        
+
         // dd(session('recruitment_data'));
-        
+
         return view('halaman_karyawan.recruitmen.index', [
             'title' => $title,
             'karyawan' => $karyawan,
@@ -104,13 +104,13 @@ class RecruitmenController extends Controller
             return response()->json([]);
         }
     }
-    
+
     public function view_doc($id)
     {
         try {
             $data = DB::table('recruitmen')->where('id', $id)->first();
             if ($data->status_approval == 'submitted') {
-                $karyawanLogin = auth()->user()->nama; // Ganti dengan cara Anda mendapatkan data karyawan yang login
+                $karyawanLogin = Auth::user()->nama; // Ganti dengan cara Anda mendapatkan data karyawan yang login
 
                 $recruitmentData = Recruitmen::where('id_users', $karyawanLogin)->first(); // Sesuaikan dengan kondisi query Anda
                 if (!$recruitmentData) {
@@ -130,36 +130,36 @@ class RecruitmenController extends Controller
                 $recruitmen = Recruitmen::find($id);
                 $data_rekrutmen = Recruitmen::where('id', $id)->get();
                 $arrayData = json_decode($data_rekrutmen, true);
-    
+
                 // Ambil nilai "jam_hadir" dari setiap elemen
                 $jamHadirArray = $recruitmen->jam_hadir;
                 $jamSelesaiArray = $recruitmen->jam_selesai;
                 $kegiatanArray = $recruitmen->kegiatan;
-    
+
                 $tgl_hadir = Carbon::createFromFormat('Y-m-d', $recruitmen->tgl_hadir)->locale('id');
                 $formattedDate = $tgl_hadir->isoFormat('DD MMMM YYYY');
-    
+
                 // tanggal pengajuan
                 $tgl_pengajuan = Carbon::createFromFormat('Y-m-d', $recruitmen->tgl_pengajuan)->locale('id');
                 $formattedDate_ajuan = $tgl_pengajuan->isoFormat('DD MMMM YYYY');
-                
+
                 $lokasiWawancara = $recruitmen->lokasiWawancara->lokasi;
                 $ruanganWawancara = $recruitmen->lokasiWawancara->ruangan;
-                
+
                 $karyawan = User::join('role_has_users', 'users.id', '=', 'role_has_users.fk_user')
                     ->join('role', 'role_has_users.fk_role', '=', 'role.id')
                     ->where('role_has_users.fk_role', 2)
                     ->select('users.*', 'role.role as role_name', 'role_has_users.fk_role as role')
                     ->first();
-                    
+
                 // mPdf
                 $mpdf = new \Mpdf\Mpdf([
                     'format' => 'A4',
                     'default_font' => 'Arial',
                 ]);
-                $mpdf->SetHeader('<img src="'. public_path('Header 2.png') .'"/>');
+                $mpdf->SetHeader('<img src="' . public_path('Header 2.png') . '"/>');
                 $mpdf->SetFooter(''); // Menghilangkan footer
-                
+
                 $mpdf->WriteHTML(view('halaman_karyawan.recruitmen.view_recruitmen', [
                     'title' => $title,
                     'karyawan' => $karyawan,
@@ -171,7 +171,7 @@ class RecruitmenController extends Controller
                     'tgl_hadir' => $formattedDate,
                     'tgl_pengajuan' => $formattedDate_ajuan,
                     'lokasi' => $lokasiWawancara,
-                'ruangan' => $ruanganWawancara,
+                    'ruangan' => $ruanganWawancara,
                 ]));
                 $mpdf->Output();
             }
@@ -179,10 +179,10 @@ class RecruitmenController extends Controller
             return redirect()->route('karyawan.recruitmen')->with('toast_error', $e->getMessage());
         }
     }
-    
+
     public function create_recruitment($id)
     {
-        try{
+        try {
             $lowongan = Lowongan::find($id);
             $departemen = Departemen::all();
             $title = 'Ajukan Lamaran';
@@ -203,12 +203,12 @@ class RecruitmenController extends Controller
             return redirect()->route('karyawan.recruitmen')->with('toast_error', $e->getMessage());
         }
     }
-    
+
     public function store_recruitment(Request $request)
     {
-        try{
+        try {
             $request->validate([
-                'file' => 'required|mimes:pdf,png,jpg,jpeg|max:2048' ,
+                'file' => 'required|mimes:pdf,png,jpg,jpeg|max:2048',
                 'transkrip' => 'required|mimes:pdf,png,jpg,jpeg|max:2048',
                 'alasan' => 'required'
             ], [
@@ -220,55 +220,55 @@ class RecruitmenController extends Controller
                 'transkrip.required' => 'Transkrip Wajib Diisi!',
                 'alasan.required' => 'Kolom alasan Wajib Diisi!',
             ]);
-            
+
             $user = Auth::user();
-            
+
             // Cek kelengkapan profil pengguna
-            if(empty($user->nama) || empty($user->alamat) || empty($user->phone_number) || empty($user->tgl_lahir)){
+            if (empty($user->nama) || empty($user->alamat) || empty($user->phone_number) || empty($user->tgl_lahir)) {
                 session()->put('alasan_penerimaan', $request->input('alasan'));
                 return redirect()->back()->with('error', 'Lengkapi profil Anda terlebih dahulu sebelum mengajukan rekrutmen.');
             }
-            
+
             $lowonganId = $request->input('id_lowongan');
-            
+
             $userId = Auth::user()->id;
-            
+
             // Cek apakah pelamar sudah mengajukan dokumen rekrutmen untuk lowongan yang sama
             $existingRecruitment = Recruitmen::where('id_users', $userId)
                 ->where('lowongan_id', $lowonganId)
                 ->first();
-                
+
             if ($existingRecruitment) {
                 return redirect()->back()->with('toast_error', 'Anda sudah mengajukan dokumen rekrutmen untuk lowongan ini.');
             }
-            
+
             $lowongan = Lowongan::findOrFail($lowonganId);
             $formattedCreatedDate = Carbon::parse($lowongan->created_at)->format('d-m-Y');
             $formattedExpiredDate = Carbon::parse($lowongan->expired_at)->format('d-m-Y');
-            
+
             $folderName = "{$lowongan->name_lowongan}(${formattedCreatedDate}-{$formattedExpiredDate})";
-            
+
             $cvFolderName = public_path("uploads/lowongan/$folderName/CV(PDF)");
             $transkripFolderName = public_path("uploads/lowongan/$folderName/Transkrip(PDF)");
-            
+
             if (!File::exists($cvFolderName)) {
                 File::makeDirectory($cvFolderName, 0777, true);
             }
             if (!File::exists($transkripFolderName)) {
                 File::makeDirectory($transkripFolderName, 0777, true);
             }
-            
+
             $pemohon = Auth::user()->nama;
-            
+
             // Simpan file di folder publik dan konversi ke base64
             $cvBase64 = null;
             $transkripBase64 = null;
-            
+
             // Simpan file di folder publik
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
                 $mimeType = $file->getMimeType();
-                
+
                 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/jpg'])) {
                     // Jika file berupa gambar (JPG/PNG), simpan langsung dalam base64
                     $cvData = file_get_contents($file);
@@ -280,11 +280,11 @@ class RecruitmenController extends Controller
                     $cvBase64 = base64_encode($cvData);
                 }
             }
-    
+
             if ($request->hasFile('transkrip')) {
                 $fileTranskrip = $request->file('transkrip');
                 $mimeType = $fileTranskrip->getMimeType();
-                
+
                 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/jpg'])) {
                     // Jika file berupa gambar (JPG/PNG), simpan di folder publik tanpa base64
                     $transkripPath = $fileTranskrip->move($transkripFolderName, 'transkrip_' . $pemohon . '.' . $fileTranskrip->getClientOriginalExtension());
@@ -296,10 +296,10 @@ class RecruitmenController extends Controller
                     $transkripBase64 = base64_encode($transkripData);
                 }
             }
-            
+
             $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_ajukan);
             $tgl_diajukan = $tanggal->format('Y-m-d');
-            
+
             $dataRekrutmen = Recruitmen::create([
                 'no_doku' => $request->input('no_doku'),
                 'tgl_pengajuan' => $tgl_diajukan,
@@ -308,21 +308,20 @@ class RecruitmenController extends Controller
                 'CV_base_64' => $cvBase64,
                 'transkrip_nilai_base_64' => $transkripBase64,
                 'kenalan' =>  $request->input('kenalan_rekrutmen'),
-                'kenalan_rekrutmen_lainnya'=> $request->input('kenalan_rekrutmen_lainnya'),
+                'kenalan_rekrutmen_lainnya' => $request->input('kenalan_rekrutmen_lainnya'),
                 'lowongan_id' => $lowongan->id
             ]);
-            
+
             $adminUsers = User::whereHas('roles', function ($query) {
                 $query->where('role', 'Admin'); // Pastikan nama kolom sesuai dengan kolom di tabel `role`
             })->get();
-            
+
             foreach ($adminUsers as $admin) {
                 $admin->notify(new DocumentSubmissionNotification($dataRekrutmen));
             }
-            
+
             // Simpan data rekrutmen ke dalam session setelah berhasil disimpan
             return redirect()->route('karyawan.recruitmen')->with('success', 'Rekrutmen Pelamar Berhasil Ditambahkan');
-
         } catch (\Exception $e) {
             return redirect()->back()->with('toast_error', $e->getMessage());
         }

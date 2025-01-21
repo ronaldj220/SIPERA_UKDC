@@ -27,8 +27,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link"
-                href="{{ env('GOOGLE_DRIVE_USER_GUIDE') }}">
+            <a class="nav-link" href="{{ env('GOOGLE_DRIVE_USER_GUIDE') }}">
                 <i class="mdi mdi-account-question menu-icon"></i>
                 <span class="menu-title"><i>User Guide</i></span>
             </a>

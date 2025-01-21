@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 
 class LowonganController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $title = 'Lowongan';
         $admin = User::join('role_has_users', 'users.id', '=', 'role_has_users.fk_user')
             ->join('role', 'role_has_users.fk_role', '=', 'role.id')
@@ -24,34 +25,36 @@ class LowonganController extends Controller
 
         // Menyimpan hasil decode dari base64 untuk setiap lowongan
         $decodedImages = [];
-    
+
         foreach ($lowongan as $item) {
             // Decode base64 menjadi string biner (normal)
             $imgBase64Lowongan = base64_decode($item->img_base_64);
-            
+
             // Simpan hasil decode di array untuk ditampilkan
             $decodedImages[] = $imgBase64Lowongan;
         }
-        
+
         return view('halaman_admin.lowongan.index', [
             'title' => $title,
             'admin' => $admin,
             'lowongan' => $lowongan
         ]);
     }
-    
-    public function search(Request $request){
+
+    public function search(Request $request)
+    {
         // Get the search query from the 'q' parameter
         $query = $request->input('q');
-        
+
         // Retrieve lowongan based on the search query
         $lowongan = Lowongan::where('name_lowongan', 'like', '%' . $query . '%')->paginate(10);
-        
+
         // Return the results as JSON
         return response()->json($lowongan);
     }
-    
-    public function add_lowongan() {
+
+    public function add_lowongan()
+    {
         $title = 'Tambah Lowongan';
         $admin = User::join('role_has_users', 'users.id', '=', 'role_has_users.fk_user')
             ->join('role', 'role_has_users.fk_role', '=', 'role.id')
@@ -60,10 +63,10 @@ class LowonganController extends Controller
             ->first();
         // Mendapatkan URL saat ini
         $currentUrl = url()->current();
-        
+
         // Memotong hanya bagian domain dari URL
         $parsedUrl = parse_url($currentUrl);
-        
+
         // Menghasilkan hanya domain
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
         return view('halaman_admin.lowongan.add_lowongan', [
@@ -72,14 +75,15 @@ class LowonganController extends Controller
             'baseUrl' => $baseUrl
         ]);
     }
-    
-    public function save_lowongan(Request $request) {
+
+    public function save_lowongan(Request $request)
+    {
         // Validasi input
-        $validated = $request->validate([
+        $request->validate([
             'name_lowongan' => 'required|string|max:255',
             'created_at' => 'required|date',
             'expired_at' => 'required|date|after:created_at',
-            'img_lowongan' => 'required|mimes:jpg,jpeg,png|max:2048,unique:lowongan,img_lowongan',
+            'img_lowongan' => 'required|mimes:jpg,jpeg,png|max:2048|unique:lowongan,img_base_64',
             'desc_lowongan' => 'required'
         ], [
             'img_lowongan.required' => 'Harap upload poster untuk lowongan!',
@@ -91,48 +95,53 @@ class LowonganController extends Controller
             'expired_at.required' => 'Tanggal Kadaluarsa Wajib Diisi!',
             'desc_lowongan.required' => 'Deskripsi Lowongan Wajib Diisi!'
         ]);
-    
+
         // Ambil data yang divalidasi
         $nameLowongan = $request->input('name_lowongan');
         $createdDate = $request->input('created_at');
         $expiredDate = $request->input('expired_at');
         $descLowongan = $request->input('desc_lowongan');
-        $linkLowongan = $request->input('link_lowongan');
         $posterLowongan = $request->file('img_lowongan'); // Ambil file yang diupload
-        
+
+        // Simpan input ke dalam session
+        session()->put([
+            'name_lowongan' => $request->input('name_lowongan'),
+            'desc_lowongan' => $request->input('desc_lowongan'),
+            'lokasi_lowongan' => $request->input('lokasi_lowongan'),
+            'created_at' => $request->input('created_at'),
+            'expired_at' => $request->input('expired_at'),
+        ]);
+
         // Mengonversi file ke base64
         $posterBase64 = base64_encode(file_get_contents($posterLowongan->getRealPath()));
-        
-        
-        
-        // Generate barcode dari link_lowongan sebagai base64
-    
+
+
         // Convert name_lowongan to camel case
         $camelCaseNameLowongan = Str::camel($nameLowongan);
-    
+
         // Format the dates to DD-MM-YYYY (instead of slashes for folder compatibility)
         $formattedCreatedDate = Carbon::parse($createdDate)->format('d-m-Y');
         $formattedExpiredDate = Carbon::parse($expiredDate)->format('d-m-Y');
-    
+
         // Membuat nama folder: nameLowongan(24-09-2024 - 25-09-2024)
         $folderName = $camelCaseNameLowongan . '(' . $formattedCreatedDate . ' - ' . $formattedExpiredDate . ')';
-    
+
         // Tentukan path untuk menyimpan folder
         $path = public_path('uploads/lowongan/' . $folderName);
-    
+
         // Cek apakah folder sudah ada, jika belum buat folder
         if (!File::exists($path)) {
             // Buat folder utama sekaligus subfolder CV dan Transkrip
             File::makeDirectory($path . '/CV(PDF)', 0777, true);  // Buat folder CV
             File::makeDirectory($path . '/Transkrip(PDF)', 0777, true);  // Buat folder Transkrip
         }
-    
+
         // Membuat nama file unik untuk poster
         $posterFileName = time() . '.' . $posterLowongan->getClientOriginalExtension();
-    
+
         // Pindahkan gambar ke folder utama
         $posterLowongan->move($path, $posterFileName);
-    
+
         // Simpan data ke dalam tabel lowongan
         Lowongan::create([
             'img_base_64' => $posterBase64,
@@ -143,11 +152,16 @@ class LowonganController extends Controller
             'expired_at' => $expiredDate,
             'link_lowongan' => NULL
         ]);
-    
+
+        // Hapus data dari session setelah sukses
+        session()->forget(['name_lowongan', 'desc_lowongan', 'lokasi_lowongan', 'created_at', 'expired_at']);
+
+        // Response Success
         return redirect()->route('admin.lowongan')->with('toast_success', 'Lowongan Berhasil Ditambahkan!');
     }
-    
-    public function edit_lowongan($id){
+
+    public function edit_lowongan($id)
+    {
         $title = 'Edit Lowongan';
         $admin = User::join('role_has_users', 'users.id', '=', 'role_has_users.fk_user')
             ->join('role', 'role_has_users.fk_role', '=', 'role.id')
@@ -162,7 +176,7 @@ class LowonganController extends Controller
             'lowongan' => $lowongan
         ]);
     }
-    
+
     public function update_lowongan(Request $request, $id)
     {
         $nameLowongan = $request->input('name_lowongan');
@@ -171,27 +185,28 @@ class LowonganController extends Controller
         $expiredDate = $request->input('expired_at');
         $descLowongan = $request->input('desc_lowongan');
         $linkLowongan = $request->input('link_lowongan');
-        
+
         // Cari posisi lamaran berdasarkan ID
         $lowongan = Lowongan::findOrFail($id);
-    
+
         if (!$lowongan) {
             return redirect()->back()->with('error', 'Lowongan tidak ditemukan.');
         }
-        
+
         $lowongan->update([
             'name_lowongan' => $nameLowongan,
             'lokasi_lowongan' => $lokasiLowongan,
-            'description' => $descLowongan, 
+            'description' => $descLowongan,
             'link_lowongan' => $linkLowongan,
             'created_at' => $createdDate,
             'expired_at' => $expiredDate
         ]);
-        
+
         return redirect()->route('admin.lowongan')->with('toast_success', 'Poster Lowongan Berhasil Diperbarui!');
     }
-    
-    public function delete_lowongan($id){
+
+    public function delete_lowongan($id)
+    {
         try {
             $lowongan = Lowongan::find($id); // Cari data berdasarkan ID
             if (!$lowongan) {
@@ -203,23 +218,24 @@ class LowonganController extends Controller
             return redirect()->route('admin.lowongan')->with('error', 'Gagal menghapus lowongan: ' . $e->getMessage());
         }
     }
-    
-    public function generateQRCode($id){
+
+    public function generateQRCode($id)
+    {
         // Mendapatkan URL saat ini
         $currentUrl = url()->current();
-        
+
         // Memotong hanya bagian domain dari URL
         $parsedUrl = parse_url($currentUrl);
-        
+
         // Menghasilkan hanya domain
         $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
-        
+
         // dd($baseUrl);
-        
+
         $lowongan = Lowongan::findOrFail($id);
-        
+
         $lowongan->update([
-           'link_lowongan' => $baseUrl
+            'link_lowongan' => $baseUrl
         ]);
         return redirect()->back()->with('success', 'Link Poster Berhasil Diperbarui!');
     }

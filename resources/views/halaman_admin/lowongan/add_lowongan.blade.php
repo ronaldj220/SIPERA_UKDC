@@ -17,64 +17,70 @@
                                             <p class="card-description text-center">
                                                 Digunakan pada saat lowongan dibuka di halaman pelamar
                                             </p>
-                                            <form action="{{ route('admin.lowongan.save_lowongan') }}"
-                                                method="post" id="myForm" enctype="multipart/form-data">
+                                            <form action="{{ route('admin.lowongan.save_lowongan') }}" method="post"
+                                                id="myForm" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="form-group mb-3">
                                                     <label for="exampleFormControlFile1">Upload Lowongan</label> <br>
-                                                    <input type='file' class='form-control-file @error('img_lowongan') is-invalid @enderror' style='border:1px solid black; width:100%' name='img_lowongan'>
+                                                    <input type='file'
+                                                        class='form-control-file @error('img_lowongan') is-invalid @enderror'
+                                                        style='border:1px solid black; width:100%' name='img_lowongan'>
                                                 </div>
                                                 @error('img_lowongan')
-                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
-                                                            &nbsp;{{ $message }}</span></div>
+                                                    <div class="alert alert-danger">* &nbsp;{{ $message }}</div>
                                                 @enderror
-<div class="form-floating mb-3">
-  <input type="text" class="form-control @error('name_lowongan') is-invalid @enderror" id="floatingInput" placeholder="name@example.com" name='name_lowongan'>
-  <label for="floatingInput">Name Lowongan</label>
-</div>
-@error('name_lowongan')
-                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
-                                                            &nbsp;{{ $message }}</span></div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text"
+                                                        class="form-control @error('name_lowongan') is-invalid @enderror"
+                                                        id="floatingInput" placeholder="name@example.com"
+                                                        name='name_lowongan'
+                                                        value="{{ session('name_lowongan', old('name_lowongan')) }}">
+                                                    <label for="floatingInput">Name Lowongan</label>
+                                                </div>
+                                                @error('name_lowongan')
+                                                    <div class="alert alert-danger">* &nbsp;{{ $message }}</div>
                                                 @enderror
 
                                                 <div class="form-floating mb-3">
-  <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name='lokasi_lowongan'>
-  <label for="floatingInput">Lokasi Lowongan</label>
-</div>
-@error('lokasi_lowongan')
-                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
-                                                            &nbsp;{{ $message }}</span></div>
+                                                    <input type="text" class="form-control" id="floatingInput"
+                                                        placeholder="name@example.com" name='lokasi_lowongan'>
+                                                    <label for="floatingInput">Lokasi Lowongan</label>
+                                                </div>
+                                                @error('lokasi_lowongan')
+                                                    <div class="alert alert-danger">* &nbsp;{{ $message }}</div>
                                                 @enderror
-                                            <div class="">
-                                                 <label for="">Kualifikasi</label>
-                                                <textarea class="form-control @error('desc_lowongan') is-invalid @enderror" name='desc_lowongan' id="desc_lowongan"></textarea>
-                                            </div>
-                                        @error('desc_lowongan')
-                                            <div class="alert alert-danger">
-                                                <span class="mdi mdi-alert-circle">&nbsp;{{ $message }}</span>
-                                            </div>
-                                        @enderror
-                                            
-                                            <div class='row g-2'>
-                                                <div class="form-floating mt-3 @error('created_at') is-invalid @enderror">
-    <input type="date" class="form-control" id="createdDate" name='created_at'>
-    <label for="createdDate">Created Date</label>
-</div>
-                                        @error('created_at')
-                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
-                                                            &nbsp;{{ $message }}</span></div>
-                                        @enderror
-                                                
-<div class="form-floating mt-3">
-    <input type="date" class="form-control @error('expired_at') is-invalid @enderror" id="expiredDate" name='expired_at'>
-    <label for="expiredDate">Expired Date</label>
-</div>
-                                            </div>
-                                            @error('expired_at')
-                                                    <div class="alert alert-danger"><span class="mdi mdi-alert-circle">
-                                                            &nbsp;{{ $message }}</span></div>
-                                        @enderror
-                                            <div class="d-flex justify-content-center" style="margin-top: 20px;">
+                                                <div class="">
+                                                    <label for="">Kualifikasi</label>
+                                                    <textarea class="form-control @error('desc_lowongan') is-invalid @enderror" name='desc_lowongan' id="desc_lowongan">{{ session('desc_lowongan', old('desc_lowongan')) }}</textarea>
+                                                </div>
+                                                @error('desc_lowongan')
+                                                    <div class="alert alert-danger">
+                                                        * &nbsp;{{ $message }}
+                                                    </div>
+                                                @enderror
+
+                                                <div class='row g-2'>
+                                                    <div
+                                                        class="form-floating mt-3 @error('created_at') is-invalid @enderror">
+                                                        <input type="date" class="form-control" id="createdDate"
+                                                            name='created_at'>
+                                                        <label for="createdDate">Created Date</label>
+                                                    </div>
+                                                    @error('created_at')
+                                                        <div class="alert alert-danger">* &nbsp;{{ $message }}</div>
+                                                    @enderror
+
+                                                    <div class="form-floating mt-3">
+                                                        <input type="date"
+                                                            class="form-control @error('expired_at') is-invalid @enderror"
+                                                            id="expiredDate" name='expired_at'>
+                                                        <label for="expiredDate">Expired Date</label>
+                                                    </div>
+                                                </div>
+                                                @error('expired_at')
+                                                    <div class="alert alert-danger">* &nbsp;{{ $message }}</div>
+                                                @enderror
+                                                <div class="d-flex justify-content-center" style="margin-top: 20px;">
                                                     <button class="btn btn-rounded btn-primary" id="submitBtn"
                                                         type="button">Tambahkan Lowongan</button>
                                                 </div>
@@ -96,11 +102,11 @@
     <!-- container-scroller -->
 
     @include('layouts.halaman_admin.script')
-    
+
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-    
-    
+
+
     <script>
         $(document).ready(function() {
             $('#desc_lowongan').summernote({
@@ -109,7 +115,7 @@
                 toolbar: [
                     // Customize your toolbar
                     ['style', ['bold', 'italic', 'underline']],
-                    ['para', [ 'ol', 'paragraph']],
+                    ['para', ['ol', 'paragraph']],
                     ['insert', ['link']],
                 ]
             });
